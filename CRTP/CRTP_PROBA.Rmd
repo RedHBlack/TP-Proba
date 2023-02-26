@@ -1,0 +1,326 @@
+---
+title: ""
+author: ""
+date: ""
+output:
+  pdf_document:
+    extra_dependencies: "subfig"
+  html_document: default
+---
+```{r echo=FALSE, message=FALSE,}
+library(randtoolbox)
+source('generateurs.R')
+
+Nsimu <- 100
+Nrepet <- 20
+```
+\thispagestyle{empty}
+\begin{center}
+  \vspace*{\stretch{1}}
+  {\scshape \huge Génération de nombres aléatoires et probabilités\\}
+  \vspace{2em}
+  Billy VILLEROY Hélène DOS SANTOS Seynabou SARR\\
+  \vspace*{\stretch{2}}
+  3IF 2022-2023
+\end{center}
+\clearpage
+\thispagestyle{empty}
+\clearpage
+\thispagestyle{empty}
+\tableofcontents
+\clearpage
+\part*{Partie I : Générateurs pseudo-aléatoires}
+\addcontentsline{toc}{part}{Générateurs pseudo-aléatoires}
+\section*{1. Mise en place et études graphiques}
+\addcontentsline{toc}{subsection}{Mise en place et études graphiques}
+
+\subsection*{A. Exemples}
+
+\paragraph{}
+Dans un premier temps, nous avons généré des nombres pseudo-aléatoires à l'aide de l'ensemble des générateurs dont vous retrouverez l'implémentation dans les annexes\footnote{Voir p. \pageref{part:annexes}}. Voici les résultats obtenus :
+\begin{itemize}
+  \item L'histogramme représente la fréquence d'apparition des nombres sur l'intervalle en ordonnée.
+  \item Le graphique représente chaque nombre en fonction de celui qui lui précède, il permet d'évaluer l'étendue, entre les valeurs, générée par l'algorithme.
+\end{itemize}
+\vspace*{\stretch{1}}
+```{r echo=FALSE, message=FALSE,fig.cap='Générateur de Mersenne Twister (Graine : 1502, 100 générations)' ,fig.subcap=c('Fréquence d\'apparition des nombres générés','Sucesseurs en fonction des prédecesseurs'),out.width="50%",fig.align='center'}
+
+sMT <- 1502
+
+mt <- MersenneTwister(Nsimu,Nrepet,sMT)
+
+hist(mt[,1],breaks = 20,xlab='',main='',col = "red")
+plot(mt[1:(Nsimu-1),1],mt[2:Nsimu,1],xlab='MT(i)', ylab='MT(i+1)', main='',col = "red")
+```
+\vspace*{\stretch{1}}
+```{r echo=FALSE, message=FALSE,fig.cap='Générateur RANDU (Graine : 5645, 100 générations)' ,fig.subcap=c('Fréquence d\'apparition des nombres générés','Sucesseurs en fonction des prédecesseurs'),out.width="50%",fig.align='center'}
+
+sRN <- 5645
+
+rn <- RANDU(Nsimu,Nrepet,sRN)
+
+hist(rn[,1],breaks = 20,xlab='',main='',col = "green")
+plot(rn[1:(Nsimu-1),1],rn[2:Nsimu,1],xlab='RN(i)', ylab='RN(i+1)', main='',col="green")
+```
+
+```{r echo=FALSE, message=FALSE,fig.cap='Générateur Standard Minimal (Graine : 9575, 100 générations)' ,fig.subcap=c('Fréquence d\'apparition des nombres générés','Sucesseurs en fonction des prédecesseurs'),out.width="50%",fig.align='center'}
+
+sSM <- 9575
+
+sm <- StandardMinimal(Nsimu,Nrepet,sSM)
+
+hist(sm[,1],breaks = 20,xlab='',main='Standard Minimal',col = "blue")
+plot(sm[1:(Nsimu-1),1],sm[2:Nsimu,1],xlab='SM(i)', ylab='SM(i+1)', main='Standard Minimal',col="blue")
+```
+
+```{r echo=FALSE, message=FALSE,fig.cap='Générateur de Von Neuman (Graine : 3454, 100 générations)' ,fig.subcap=c('Fréquence d\'apparition des nombres générés','Sucesseurs en fonction des prédecesseurs'),out.width="50%",fig.align='center'}
+
+sVN <- 3454 
+
+vn <- VonNeumann(Nsimu,Nrepet,sVN)
+
+hist(vn[,1],breaks = 20,xlab='',main='',xlim = c(0,9999),col = "pink")
+
+plot(vn[1:(Nsimu-1),1],vn[2:Nsimu,1],xlab='VN(i)', ylab='VN(i+1)', main='',xlim = c(0,9999),col="pink")
+```
+
+\clearpage
+
+\subsection*{B. Vision globale}
+
+\paragraph{}
+Pour donner une vision d'ensemble, nous avons généré 100 séquences avec des graines\footnote{Les valeurs ont été divisées par 2 afin de rentrer dans l'intervalle \{0,2^31\} produites par Mersenne Twister avec la graine 4675 :
+
+```{r echo=FALSE, message=FALSE,fig.cap='Etude sur 100 séquences de cardinal 100, Graine aléatoire' ,fig.subcap=c('Mersenne Twister','Von Neuman','RANDU','Standard Minimal'), fig.ncol=2, out.width="50%"}
+seeds <- MersenneTwister(Nsimu,Nrepet,4675)/2
+a <- vector()
+b <- vector()
+c <- vector()
+d <- vector()
+for(i in 1:100){
+  a <- c(a,MersenneTwister(100,Nrepet,seeds[i])[,1])
+  b <- c(b,VonNeumann(100,Nrepet,seeds[i])[,1])
+  c <- c(c,RANDU(100,Nrepet,seeds[i])[,1])
+  d <- c(d,StandardMinimal(100,Nrepet,seeds[i])[,1])
+}
+hist(a,xlab = 'Nombre généré',breaks=20,main = '',xlim = c(0,2^32),col = 'red')
+hist(b,xlab = 'Nombre généré',breaks=20,main = '',xlim = c(0,10000),col = 'green')
+hist(c,xlab = 'Nombre généré',breaks=20,main = '',xlim = c(0,2^31),col = 'blue')
+hist(d,xlab = 'Nombre généré',breaks=20,main = '',xlim = c(0,2^31),col = 'pink')
+  
+```
+
+\textbf{Analyse graphique}
+\paragraph{}
+Dans l'ensemble, les nombres produits sont bien répartis sur les intervalles considérés à part pour Von Neuman, qui génère une majorité de nombres inférieurs à 2000. Mais cela n'est qu'une apréciation visuelle, par la suite nous allons effectuer divers tests sur nos générateurs afin de déterminer si les nombres et séquences produites peuvent êtres  considérés comme aléatoires.
+
+\clearpage
+\section*{2. Etudes probabilistes}
+\addcontentsline{toc}{subsection}{Etudes probabilistes}
+
+Les deux premières parties traitent de tests réalisés sur les bits\footnote{Générés par la fonction \textit{binary}, p. \pageref{subsec:binary}} des nombres générés.
+
+\subsection*{A. Tests de répartition\footnote{Voir \textit{Frequency} p. \pageref{frequency}}}
+```{r echo=FALSE, message=FALSE,fig.cap='Etude de la répartition des bits sur 100 séquences de cardinal 100, Graines aléatoires' ,fig.subcap=c('Mersenne Twister','Von Neuman','RANDU','Standard Minimal'), fig.ncol=2, out.width="50%"}
+
+x <- vector()
+y <- vector()
+z <- vector()
+t <- vector()
+
+for(j in 1:100){
+    x <- c(x,Frequency(binary(a[j]),32))
+    y <- c(y,Frequency(binary(b[j]),32))
+    z <- c(z,Frequency(binary(c[j]),32))
+    t <- c(t,Frequency(binary(d[j]),32))
+}
+
+hist(x,xlab='',breaks=100,main = '',xlim = c(0,1),col = 'red')
+hist(y,xlab='',breaks=100,main = '',xlim = c(0,0.015),col = 'green')
+hist(z,xlab='',breaks=100,main = '',xlim = c(0,1),col = 'blue')
+hist(t,xlab='',breaks=100,main = '',xlim = c(0,1),col = 'pink')
+```
+\clearpage
+\subsection*{B. Tests d'ordre\footnote{Voir \textit{Runs} p. \pageref{runs}}}
+```{r echo=FALSE, message=FALSE,fig.cap='Etude de l\'ordonnancement des bits sur 100 séquences de cardinal 100, Graines aléatoires' ,fig.subcap=c('Mersenne Twister','Von Neuman','RANDU','Standard Minimal'), fig.ncol=2, out.width="50%"}
+
+x <- vector()
+y <- vector()
+z <- vector()
+t <- vector()
+
+for(j in 1:100){
+    x <- c(x,Runs(binary(a[j]),32))
+    y <- c(y,Runs(binary(b[j]),32))
+    z <- c(z,Runs(binary(c[j]),32))
+    t <- c(t,Runs(binary(d[j]),32))
+}
+
+hist(x,xlab='',breaks=100,main = '',xlim = c(0,1),col = 'red')
+hist(y,xlab='',breaks=100,main = '',xlim = c(0,1),col = 'green')
+hist(z,xlab='',breaks=100,main = '',xlim = c(0,1),col = 'blue')
+hist(t,xlab='',breaks=100,main = '',xlim = c(0,1),col = 'pink')
+```
+\clearpage
+\subsection*{C. Tests uniformes\footnote{Voir la documentation de order.test : www.rdocumentation.org/packages/randtoolbox/versions/2.0.3/topics/order.test}}
+Ici nous nous intéressons aux nombres dans leur représentation décimale et vérifions si la séquence produite suit la loi uniforme (chaque nombre à autant de chance d'apparaître qu'un autre).
+```{r echo=FALSE, message=FALSE,fig.cap='Etude de la loi uniforme sur 100 séquences de cardinal 100, Graines aléatoires' ,fig.subcap=c('Mersenne Twister','Von Neuman','RANDU','Standard Minimal'), fig.ncol=2, out.width="50%"}
+
+rTestMT <- vector()
+rTestVN <- vector()
+rTestRN <- vector()
+rTestSM <- vector()
+  
+for(i in 1:100){
+  rTestMT <- c(rTestMT,order.test(a[(1+100*(i-1)):(100*i)],4,echo=FALSE)$p.value)
+  rTestVN <- c(rTestVN,order.test(b[(1+100*(i-1)):(100*i)],4,echo=FALSE)$p.value)
+  rTestRN <- c(rTestRN,order.test(c[(1+100*(i-1)):(100*i)],4,echo=FALSE)$p.value)
+  rTestSM <- c(rTestSM,order.test(d[(1+100*(i-1)):(100*i)],4,echo=FALSE)$p.value)
+}
+
+hist(rTestMT,xlab='',breaks=100,main = '',xlim = c(0,1),col = 'red')
+hist(rTestVN,xlab='',breaks=100,main = '',xlim = c(0,1),col = 'green')
+hist(rTestRN,xlab='',breaks=100,main = '',xlim = c(0,1),col = 'blue')
+hist(rTestSM,xlab='',breaks=100,main = '',xlim = c(0,1),col = 'pink')
+```
+
+\clearpage
+
+\part*{Partie II : Etudes des files d'attentes}
+\addcontentsline{toc}{part}{Etudes des files d'attentes}
+\clearpage
+
+\part{Annexes}
+\label{part:annexes}
+
+\section*{Algorithme des générateurs}
+\addcontentsline{toc}{subsection}{Algorithmes des générateurs}
+
+\textbf{Von Neuman}
+
+```{r}
+VonNeumann <- function(n, p=1, graine)
+{
+  x <-  rep(graine,n*p+1)
+  for(i in 2:(n*p+1))
+  {
+    numbers <- strsplit(format(x[i-1]^2,scientific=FALSE),'')[[1]]
+    while(length(numbers)>4){ 
+        numbers <- numbers[2:(length(numbers)-1)] 
+    }
+    x[i] <- as.numeric(numbers)%*%(10^seq(length(numbers)-1,0,-1))
+  }
+  x <- matrix(x[2:(n*p+1)],nrow=n,ncol=p)
+  return(x)
+}
+```
+\textbf{Mersenne Twister}
+```{r}
+MersenneTwister <- function(n, p=1, graine)
+{
+  set.seed(graine,kind='Mersenne-Twister')
+  x <- sample.int(2^32-1,n*p)
+  x <- matrix(x,nrow=n,ncol=p)
+  return(x)
+}
+```
+\textbf{RANDU}
+```{r}
+RANDU <- function(n=1,k = 10,graine)
+{
+  x <-  rep(graine,k*n+1)
+  for (i in 2:(k*n+1)) {
+    x[i] <- (65539*x[i-1])%%(2^31)
+  }
+  x <- matrix(x[2:(k*n+1)],nrow=n,ncol=k)
+  
+  return(x)
+}
+```
+\textbf{Standard Minimal}
+```{r}
+StandardMinimal <- function(n=1,k = 10,graine)
+{
+  x <-  rep(graine,k*n+1)
+  
+  for (i in 2:(k*n+1)) {
+    x[i] <- (16807*x[i-1])%% (2^31-1)
+  }
+  
+  x <- matrix(x[2:(k*n+1)],nrow=n,ncol=k)
+  
+  return(x)
+}
+```
+
+\section*{Binary}
+\addcontentsline{toc}{subsection}{Algorithme de \textit{binary}}
+\label{subsec:binary}
+```{r}
+binary <- function(x)
+{
+  if((x<2^31)&(x>=0))
+    return( as.integer(intToBits(as.integer(x))) )
+  else{
+    if((x<2^32)&(x>0))
+      return( c(binary(x-2^31)[1:31], 1) )
+    else{
+      cat('Erreur dans binary : le nombre etudie n est pas un entier positif en 32 bits.\n')
+      return(c())
+    }
+  }
+}
+```
+
+\section*{Algorithmes des tests}
+\addcontentsline{toc}{subsection}{Algorithmes des tests}
+\textbf{Frequency ou l'étude de la répartition binaire}
+\label{frequency}
+```{r}
+Frequency <- function(x, nb)
+{
+  for(i in 1:nb){
+    if(x[i]==0)
+      x[i] <- -1
+  }
+  
+  S <- sum(x)
+  
+  sObs <- abs(S)/sqrt(nb)
+  
+  p <- 2*(1-pnorm(sObs,0,1))
+  
+  return(p)
+}
+```
+
+\textbf{Runs ou l'étude de l'ordre binaire}
+\label{runs}
+```{r}
+Runs <- function(x, nb)
+{
+  #Pre-test
+  S <- 0
+  for(i in 1:nb){
+    if(x[i]==1)
+      S <- S+1
+  }
+  pi <- S/nb
+  
+  if(abs(pi-1/2)>=(2/sqrt(nb))){
+    return(0.0)
+  }
+  
+  #Test
+  VnObs <- 0
+  for(i in 2:nb-1){
+    if(x[i+1]!=x[i])
+      VnObs <- VnObs + 1
+  }
+  VnObs <- VnObs + 1
+  frac <- (abs(VnObs-2*nb*pi*(1-pi))/(2*sqrt(nb)*pi*(1-pi)))
+  P <- 2*(1-pnorm(frac,0,1))
+  
+  return(P)
+}
+```
