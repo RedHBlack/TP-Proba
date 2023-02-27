@@ -89,7 +89,7 @@ plot(vn[1:(Nsimu-1),1],vn[2:Nsimu,1],xlab='VN(i)', ylab='VN(i+1)', main='',xlim 
 \subsection*{B. Vision globale}
 
 \paragraph{}
-Pour donner une vision d'ensemble, nous avons généré 100 séquences avec des graines\footnote{Les valeurs ont été divisées par 2 afin de rentrer dans l'intervalle \{0,2^31\} produites par Mersenne Twister avec la graine 4675 :
+Pour donner une vision d'ensemble, nous avons généré 100 séquences avec des graines\footnote{Les valeurs ont été divisées par 2 afin de rentrer dans l'intervalle \{0,$2^{31}$\}, vous pouvez les retrouver p. \pageref{part:annexes}} produites par Mersenne Twister avec la graine 4675 :
 
 ```{r echo=FALSE, message=FALSE,fig.cap='Etude sur 100 séquences de cardinal 100, Graine aléatoire' ,fig.subcap=c('Mersenne Twister','Von Neuman','RANDU','Standard Minimal'), fig.ncol=2, out.width="50%"}
 seeds <- MersenneTwister(Nsimu,Nrepet,4675)/2
@@ -271,7 +271,10 @@ binary <- function(x)
   }
 }
 ```
-
+\section*{Graines}
+```{r echo=FALSE}
+print(seeds[,1])
+```
 \section*{Algorithmes des tests}
 \addcontentsline{toc}{subsection}{Algorithmes des tests}
 \textbf{Frequency ou l'étude de la répartition binaire}
