@@ -1,3 +1,4 @@
-*.html
-*.aux
-*.out
+CRTP/*.html
+CRTP/*.aux
+CRTP/*.out
+README.md
