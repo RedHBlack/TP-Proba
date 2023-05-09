@@ -110,9 +110,45 @@ Runs <- function(x, nb)
   P <- 2*(1-pnorm(frac,0,1))
   
   return(P)
-  
-  
-  
 }
 
+FileMM1 <- function(lambda, mu, Duree){
+  arrivee <- vector()
+  depart <- vector()
+  T <- 0
+  D <- 0
+  i <- 1
+  while(T<=Duree){
+    T <- T + rexp(1,lambda)
+    if(T <= Duree){
+      arrivee[i] <- T
+      D <- arrivee[i] + rexp(1,mu)
+      if(D <= Duree){
+        depart[i] <- D
+      }
+      i <- i + 1
+    }
+  }
+  retour <- list(arrivee, depart)
+  return(retour)
+}
 
+nbClients <- function(arrivee, depart){
+  i <- 1
+  j <- 1
+  k <- 1
+  systeme <- vector()
+  systeme[k] <- 0
+  k <- k+1
+  while(i <= length(arrivee) ||  j <= length(depart) ){
+    if(arrivee[i] > depart[j]){
+      systeme[k] <- systeme[k-1]-1
+      j <- j + 1
+    }else{
+      systeme[k] <- systeme[k-1]+1
+      i <- i + 1
+    }
+    k <- k +1
+  }
+  return(systeme)
+}
