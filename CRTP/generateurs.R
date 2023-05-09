@@ -63,14 +63,20 @@ StandardMinimal <- function(n=1,k = 10,graine)
 
 Frequency <- function(x, nb)
 {
-  for(i in 1:nb){
-    if(x[i]==0)
-      x[i] <- -1
+  cn <- binary(x[1])
+  b <- cn[1:nb]
+  for(i in 2:length(x)){
+    cn <- binary(x[i])
+    b <- c(b,cn[1:nb])
+  }
+  for(i in 1:length(b)){
+    if(b[i]==0)
+      b[i] <- -1
   }
   
-  S <- sum(x)
+  S <- sum(b)
   
-  sObs <- abs(S)/sqrt(nb)
+  sObs <- abs(S)/sqrt(length(b))
   
   p <- 2*(1-pnorm(sObs,0,1))
   
@@ -79,26 +85,28 @@ Frequency <- function(x, nb)
 
 Runs <- function(x, nb)
 {
-  #Pre-test
-  S <- 0
-  for(i in 1:nb){
-    if(x[i]==1)
-      S <- S+1
+  cn <- binary(x[1])
+  b <- cn[1:nb]
+  for(i in 2:length(x)){
+    cn <- binary(x[i])
+    b <- c(b,cn[1:nb])
   }
-  pi <- S/nb
+  #Pre-test
+  S <- sum(b)
+  pi <- S/length(b)
   
-  if(abs(pi-1/2)>=(2/sqrt(nb))){
+  if(abs(pi-(1/2))>=(2/sqrt(length(b)))){
     return(0.0)
   }
   
   #Test
   VnObs <- 0
-  for(i in 2:nb-1){
-    if(x[i+1]!=x[i])
+  for(i in 1:(length(b)-1)){
+    if(b[i+1]!=b[i])
       VnObs <- VnObs + 1
   }
   VnObs <- VnObs + 1
-  frac <- (abs(VnObs-2*nb*pi*(1-pi))/(2*sqrt(nb)*pi*(1-pi)))
+  frac <- (abs(VnObs-2*length(b)*pi*(1-pi))/(2*sqrt(length(b))*pi*(1-pi)))
   P <- 2*(1-pnorm(frac,0,1))
   
   return(P)
@@ -106,3 +114,5 @@ Runs <- function(x, nb)
   
   
 }
+
+
