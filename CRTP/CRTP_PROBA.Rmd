@@ -89,10 +89,10 @@ plot(vn[1:(Nsimu-1),1],vn[2:Nsimu,1],xlab='VN(i)', ylab='VN(i+1)', main='',xlim 
 \subsection*{B. Vision globale}
 
 \paragraph{}
-Pour donner une vision d'ensemble, nous avons généré 100 séquences avec des graines\footnote{Les valeurs ont été divisées par 2 afin de rentrer dans l'intervalle \{0,$2^{31}$\}, vous pouvez les retrouver p. \pageref{part:annexes}} produites par Mersenne Twister avec la graine 4675 :
+Pour donner une vision d'ensemble, nous avons généré 100 séquences avec des graines\footnote{Vous pouvez les retrouver p. \pageref{part:annexes}} produites par la fonction **sample** de R :
 
 ```{r echo=FALSE, message=FALSE,fig.cap='Etude sur 100 séquences de cardinal 100, Graine aléatoire' ,fig.subcap=c('Mersenne Twister','Von Neuman','RANDU','Standard Minimal'), fig.ncol=2, out.width="50%"}
-seeds <- MersenneTwister(Nsimu,Nrepet,4675)/2
+seeds <- sample(1:2^31,size = 100)
 a <- vector()
 b <- vector()
 c <- vector()
@@ -129,16 +129,23 @@ z <- vector()
 t <- vector()
 
 for(j in 1:100){
-    x <- c(x,Frequency(binary(a[j]),32))
-    y <- c(y,Frequency(binary(b[j]),32))
-    z <- c(z,Frequency(binary(c[j]),32))
-    t <- c(t,Frequency(binary(d[j]),32))
+    x <- c(x,Frequency(a[(100*(j-1)+1):(100*j)],32))
+    y <- c(y,Frequency(b[(100*(j-1)+1):(100*j)],32))
+    z <- c(z,Frequency(c[(100*(j-1)+1):(100*j)],32))
+    t <- c(t,Frequency(d[(100*(j-1)+1):(100*j)],32))
 }
 
-hist(x,xlab='',breaks=100,main = '',xlim = c(0,1),col = 'red')
-hist(y,xlab='',breaks=100,main = '',xlim = c(0,0.015),col = 'green')
-hist(z,xlab='',breaks=100,main = '',xlim = c(0,1),col = 'blue')
-hist(t,xlab='',breaks=100,main = '',xlim = c(0,1),col = 'pink')
+plot(1:100,x,xlab='N° Séquence', ylab='P_value',xlim=c(1,100),ylim=c(0, 1.0),cex=0.5, main='',col = "red")
+lines(1:100,rep(0.01,100),col="red")
+
+plot(1:100,y,xlab='N° Séquence', ylab='P_value',xlim=c(1,100),ylim=c(0, 1.0),cex=0.5, main='',col = "blue")
+lines(1:100,rep(0.01,100),col="blue")
+
+plot(1:100,z,xlab='N° Séquence', ylab='P_value',xlim=c(1,100),ylim=c(0, 1.0),cex=0.5, main='',col = "green")
+lines(1:100,rep(0.01,100),col="green")
+
+plot(1:100,t,xlab='N° Séquence', ylab='P_value',xlim=c(1,100),ylim=c(0, 1.0),cex=0.5, main='',col = "pink")
+lines(1:100,rep(0.01,100),col="pink")
 ```
 \clearpage
 \subsection*{B. Tests d'ordre\footnote{Voir \textit{Runs} p. \pageref{runs}}}
@@ -150,16 +157,23 @@ z <- vector()
 t <- vector()
 
 for(j in 1:100){
-    x <- c(x,Runs(binary(a[j]),32))
-    y <- c(y,Runs(binary(b[j]),32))
-    z <- c(z,Runs(binary(c[j]),32))
-    t <- c(t,Runs(binary(d[j]),32))
+    x <- c(x,Runs(a[(100*(j-1)+1):(100*j)],32))
+    y <- c(y,Runs(b[(100*(j-1)+1):(100*j)],32))
+    z <- c(z,Runs(c[(100*(j-1)+1):(100*j)],32))
+    t <- c(t,Runs(d[(100*(j-1)+1):(100*j)],32))
 }
 
-hist(x,xlab='',breaks=100,main = '',xlim = c(0,1),col = 'red')
-hist(y,xlab='',breaks=100,main = '',xlim = c(0,1),col = 'green')
-hist(z,xlab='',breaks=100,main = '',xlim = c(0,1),col = 'blue')
-hist(t,xlab='',breaks=100,main = '',xlim = c(0,1),col = 'pink')
+plot(1:100,x,xlab='N° Séquence', ylab='P_value',xlim=c(1,100),ylim=c(0, 1.0),cex=0.5, main='',col = "red")
+lines(1:100,rep(0.01,100),col="red")
+
+plot(1:100,y,xlab='N° Séquence', ylab='P_value',xlim=c(1,100),ylim=c(0, 1.0),cex=0.5, main='',col = "blue")
+lines(1:100,rep(0.01,100),col="blue")
+
+plot(1:100,z,xlab='N° Séquence', ylab='P_value',xlim=c(1,100),ylim=c(0, 1.0),cex=0.5, main='',col = "green")
+lines(1:100,rep(0.01,100),col="green")
+
+plot(1:100,t,xlab='N° Séquence', ylab='P_value',xlim=c(1,100),ylim=c(0, 1.0),cex=0.5, main='',col = "pink")
+lines(1:100,rep(0.01,100),col="pink")
 ```
 \clearpage
 \subsection*{C. Tests uniformes\footnote{Voir la documentation de order.test : www.rdocumentation.org/packages/randtoolbox/versions/2.0.3/topics/order.test}}
@@ -178,18 +192,38 @@ for(i in 1:100){
   rTestSM <- c(rTestSM,order.test(d[(1+100*(i-1)):(100*i)],4,echo=FALSE)$p.value)
 }
 
-hist(rTestMT,xlab='',breaks=100,main = '',xlim = c(0,1),col = 'red')
-hist(rTestVN,xlab='',breaks=100,main = '',xlim = c(0,1),col = 'green')
-hist(rTestRN,xlab='',breaks=100,main = '',xlim = c(0,1),col = 'blue')
-hist(rTestSM,xlab='',breaks=100,main = '',xlim = c(0,1),col = 'pink')
+plot(1:100,rTestMT,xlab='N° Séquence', ylab='P_value',xlim=c(1,100),ylim=c(0, 1.0),cex=0.5, main='',col = "red")
+lines(1:100,rep(0.01,100),col="red")
+
+plot(1:100,rTestVN,xlab='N° Séquence', ylab='P_value',xlim=c(1,100),ylim=c(0, 1.0),cex=0.5, main='',col = "blue")
+lines(1:100,rep(0.01,100),col="blue")
+
+plot(1:100,rTestRN,xlab='N° Séquence', ylab='P_value',xlim=c(1,100),ylim=c(0, 1.0),cex=0.5, main='',col = "green")
+lines(1:100,rep(0.01,100),col="green")
+
+plot(1:100,rTestSM,xlab='N° Séquence', ylab='P_value',xlim=c(1,100),ylim=c(0, 1.0),cex=0.5, main='',col = "pink")
+lines(1:100,rep(0.01,100),col="pink")
+
+#hist(rTestMT,xlab='',breaks=100,main = '',xlim = c(0,1),col = 'red')
+#hist(rTestVN,xlab='',breaks=100,main = '',xlim = c(0,1),col = 'green')
+#hist(rTestRN,xlab='',breaks=100,main = '',xlim = c(0,1),col = 'blue')
+#hist(rTestSM,xlab='',breaks=100,main = '',xlim = c(0,1),col = 'pink')
 ```
 
 \clearpage
 
 \part*{Partie II : Etudes des files d'attentes}
 \addcontentsline{toc}{part}{Etudes des files d'attentes}
-\clearpage
 
+\section*{1.La file M/M/1 }
+\addcontentsline{toc}{subsection}{La file M/M/1}
+```{r echo=FALSE, message=FALSE}
+    e = FileMM1(1,1,10)
+    sys= nbClients(e$a ,e$d)
+    print(e$a)
+    print(e$d)
+    print(sys)
+```
 \part{Annexes}
 \label{part:annexes}
 
@@ -273,7 +307,7 @@ binary <- function(x)
 ```
 \section*{Graines}
 ```{r echo=FALSE}
-print(seeds[,1])
+print(seeds)
 ```
 \section*{Algorithmes des tests}
 \addcontentsline{toc}{subsection}{Algorithmes des tests}
@@ -282,14 +316,20 @@ print(seeds[,1])
 ```{r}
 Frequency <- function(x, nb)
 {
-  for(i in 1:nb){
-    if(x[i]==0)
-      x[i] <- -1
+  cn <- binary(x[1])
+  b <- cn[1:nb]
+  for(i in 2:length(x)){
+    cn <- binary(x[i])
+    b <- c(b,cn[1:nb])
+  }
+  for(i in 1:length(b)){
+    if(b[i]==0)
+      b[i] <- -1
   }
   
-  S <- sum(x)
+  S <- sum(b)
   
-  sObs <- abs(S)/sqrt(nb)
+  sObs <- abs(S)/sqrt(length(b))
   
   p <- 2*(1-pnorm(sObs,0,1))
   
@@ -302,26 +342,28 @@ Frequency <- function(x, nb)
 ```{r}
 Runs <- function(x, nb)
 {
-  #Pre-test
-  S <- 0
-  for(i in 1:nb){
-    if(x[i]==1)
-      S <- S+1
+  cn <- binary(x[1])
+  b <- cn[1:nb]
+  for(i in 2:length(x)){
+    cn <- binary(x[i])
+    b <- c(b,cn[1:nb])
   }
-  pi <- S/nb
+  #Pre-test
+  S <- sum(b)
+  pi <- S/length(b)
   
-  if(abs(pi-1/2)>=(2/sqrt(nb))){
+  if(abs(pi-(1/2))>=(2/sqrt(length(b)))){
     return(0.0)
   }
   
   #Test
   VnObs <- 0
-  for(i in 2:nb-1){
-    if(x[i+1]!=x[i])
+  for(i in 1:(length(b)-1)){
+    if(b[i+1]!=b[i])
       VnObs <- VnObs + 1
   }
   VnObs <- VnObs + 1
-  frac <- (abs(VnObs-2*nb*pi*(1-pi))/(2*sqrt(nb)*pi*(1-pi)))
+  frac <- (abs(VnObs-2*length(b)*pi*(1-pi))/(2*sqrt(length(b))*pi*(1-pi)))
   P <- 2*(1-pnorm(frac,0,1))
   
   return(P)

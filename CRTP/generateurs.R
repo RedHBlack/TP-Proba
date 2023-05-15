@@ -129,7 +129,7 @@ FileMM1 <- function(lambda, mu, Duree){
       i <- i + 1
     }
   }
-  retour <- list(arrivee, depart)
+  retour <- list(a=arrivee, d=depart)
   return(retour)
 }
 
@@ -140,7 +140,7 @@ nbClients <- function(arrivee, depart){
   systeme <- vector()
   systeme[k] <- 0
   k <- k+1
-  while(i <= length(arrivee) ||  j <= length(depart) ){
+  while(i <= length(depart)){
     if(arrivee[i] > depart[j]){
       systeme[k] <- systeme[k-1]-1
       j <- j + 1
@@ -150,5 +150,13 @@ nbClients <- function(arrivee, depart){
     }
     k <- k +1
   }
+  print(i)
+  print(j)
+  
+  while(i!=length() | j!=length(depart))
+  
+  print(i)
+  print(j)
+  
   return(systeme)
 }
