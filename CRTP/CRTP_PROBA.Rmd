@@ -326,4 +326,14 @@ Runs <- function(x, nb)
   
   return(P)
 }
+#partie 2
+#liste <- FileMM1(1/10,1/20,12*60*60)
+#systeme <- nbClients(liste[[1]], liste[[2]])
+#plot(y = systeme[[2]],x = systeme[[1]]/(60*60), xlabel = "secondes", ylabel = "nombre")
+#liste <- FileMM1(1/14,1/20,12*60*60)
+#systeme <- nbClients(liste[[1]], liste[[2]])
+#plot(y = systeme[[2]],x = systeme[[1]]/(60*60), xlabel = "secondes", ylabel = "nombre")
+#liste <- FileMM1(1/20,1/20,12*60*60)
+#systeme <- nbClients(liste[[1]], liste[[2]])
+#plot(y = systeme[[2]],x = systeme[[1]]/(60*60), xlabel = "secondes", ylabel = "nombre")
 ```

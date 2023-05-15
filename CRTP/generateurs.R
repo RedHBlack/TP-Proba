@@ -134,21 +134,30 @@ FileMM1 <- function(lambda, mu, Duree){
 }
 
 nbClients <- function(arrivee, depart){
+  defaultW <- getOption("warn")
+  options(warn = -1)
   i <- 1
   j <- 1
   k <- 1
-  systeme <- vector()
-  systeme[k] <- 0
+  NBpersonnes <- vector()
+  NBpersonnes[k] <- 0
+  heure <- vector()
+  heure[k] <- 0
   k <- k+1
-  while(i <= length(arrivee) ||  j <= length(depart) ){
-    if(arrivee[i] > depart[j]){
-      systeme[k] <- systeme[k-1]-1
-      j <- j + 1
-    }else{
-      systeme[k] <- systeme[k-1]+1
+  while(i <= length(arrivee) || j <= length(depart) ){
+    if(i <= length(arrivee) && arrivee[i] < min(depart, na.rm = TRUE)){
+      NBpersonnes[k] <- NBpersonnes[k-1]+1
+      heure[k] <- arrivee[i]
       i <- i + 1
+    }else{
+      NBpersonnes[k] <- NBpersonnes[k-1]-1
+      heure[k] <- min(depart, na.rm = TRUE)
+      depart <- depart[depart != heure[k]]
+      j <- j + 1
     }
     k <- k +1
   }
+  options(warn = defaultW)
+  systeme <- list(heure, NBpersonnes)
   return(systeme)
 }
