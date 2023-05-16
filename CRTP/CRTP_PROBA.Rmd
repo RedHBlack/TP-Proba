@@ -217,12 +217,30 @@ lines(1:100,rep(0.01,100),col="pink")
 
 \section*{1.La file M/M/1 }
 \addcontentsline{toc}{subsection}{La file M/M/1}
-```{r echo=FALSE, message=FALSE}
-    e = FileMM1(1,1,10)
-    sys= nbClients(e$a ,e$d)
-    print(e$a)
-    print(e$d)
-    print(sys)
+
+\paragraph{}
+Nous allons visualiser l'évolution d'un système pendant une durée de 12 heures:
+```{r echo=FALSE, message=FALSE,fig.cap='évolution du nombre de clients dans le système pendant 12 heures de fonctionnement' ,fig.subcap=c('10 clients qui arrivent et 20 qui partent en moyenne par heure','14 clients qui arrivent et 20 qui partent en moyenne par heure','20 clients qui arrivent et 20 qui partent en moyenne par heure','30 clients qui arrivent et 20 qui partent en moyenne par heure'), fig.ncol=2, out.width="50%"}
+
+rsys10 <- FileMM1(10, 20, 12)
+rsys14 <- FileMM1(14, 20, 12)
+rsys20 <- FileMM1(20, 20, 12)
+rsys30 <- FileMM1(30, 20, 12)
+  
+rnbClient10 <- nbClients(rsys10[[1]], rsys10[[2]])
+rnbClient14 <- nbClients(rsys14[[1]], rsys14[[2]])
+rnbClient20 <- nbClients(rsys20[[1]], rsys20[[2]])
+rnbClient30 <- nbClients(rsys30[[1]], rsys30[[2]])
+
+plot(rnbClient10[[1]],rnbClient10[[2]],xlab='temps', ylab='Nombre de clients',cex=0.5, type="o",main='',col = "red")
+plot(rnbClient14[[1]],rnbClient14[[2]],xlab='temps', ylab='Nombre de clients',cex=0.5, type="o",main='',col = "blue")
+plot(rnbClient20[[1]],rnbClient20[[2]],xlab='temps', ylab='Nombre de clients',cex=0.5, type="o",main='',col = "green")
+plot(rnbClient30[[1]],rnbClient30[[2]],xlab='temps', ylab='Nombre de clients',cex=0.5, type="o",main='',col = "pink")
+
+#hist(rTestMT,xlab='',breaks=100,main = '',xlim = c(0,1),col = 'red')
+#hist(rTestVN,xlab='',breaks=100,main = '',xlim = c(0,1),col = 'green')
+#hist(rTestRN,xlab='',breaks=100,main = '',xlim = c(0,1),col = 'blue')
+#hist(rTestSM,xlab='',breaks=100,main = '',xlim = c(0,1),col = 'pink')
 ```
 \part{Annexes}
 \label{part:annexes}
