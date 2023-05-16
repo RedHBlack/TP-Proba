@@ -3,9 +3,9 @@ title: ""
 author: ""
 date: ""
 output:
+  html_document: default
   pdf_document:
     extra_dependencies: "subfig"
-  html_document: default
 ---
 ```{r echo=FALSE, message=FALSE,}
 library(randtoolbox)
@@ -222,10 +222,10 @@ lines(1:100,rep(0.01,100),col="pink")
 Nous allons visualiser l'évolution d'un système pendant une durée de 12 heures:
 ```{r echo=FALSE, message=FALSE,fig.cap='évolution du nombre de clients dans le système pendant 12 heures de fonctionnement' ,fig.subcap=c('10 clients qui arrivent et 20 qui partent en moyenne par heure','14 clients qui arrivent et 20 qui partent en moyenne par heure','20 clients qui arrivent et 20 qui partent en moyenne par heure','30 clients qui arrivent et 20 qui partent en moyenne par heure'), fig.ncol=2, out.width="50%"}
 
-rsys10 <- FileMM1(10, 20, 12)
-rsys14 <- FileMM1(14, 20, 12)
-rsys20 <- FileMM1(20, 20, 12)
-rsys30 <- FileMM1(30, 20, 12)
+rsys10 <- FileMM1(10/60, 20/60, 12*60)
+rsys14 <- FileMM1(14/60, 20/60, 12*60)
+rsys20 <- FileMM1(20/60, 20/60, 12*60)
+rsys30 <- FileMM1(30/60, 20/60, 12*60)
   
 rnbClient10 <- nbClients(rsys10[[1]], rsys10[[2]])
 rnbClient14 <- nbClients(rsys14[[1]], rsys14[[2]])
@@ -237,10 +237,80 @@ plot(rnbClient14[[1]],rnbClient14[[2]],xlab='temps', ylab='Nombre de clients',ce
 plot(rnbClient20[[1]],rnbClient20[[2]],xlab='temps', ylab='Nombre de clients',cex=0.5, type="o",main='',col = "green")
 plot(rnbClient30[[1]],rnbClient30[[2]],xlab='temps', ylab='Nombre de clients',cex=0.5, type="o",main='',col = "pink")
 
-#hist(rTestMT,xlab='',breaks=100,main = '',xlim = c(0,1),col = 'red')
-#hist(rTestVN,xlab='',breaks=100,main = '',xlim = c(0,1),col = 'green')
-#hist(rTestRN,xlab='',breaks=100,main = '',xlim = c(0,1),col = 'blue')
-#hist(rTestSM,xlab='',breaks=100,main = '',xlim = c(0,1),col = 'pink')
+
+```
+
+\paragraph{}
+Etudions le rapport de notre file au modèle théorique.
+
+Formule de little #écrire formule
+
+```{r echo=FALSE, message=FALSE}
+
+  moyenne10 <- Moyennes(rnbClient10,rsys10,12*60)
+  moyenne14 <- Moyennes(rnbClient14,rsys14,12*60)
+  moyenne20 <- Moyennes(rnbClient20,rsys20,12*60)
+  moyenne30 <- Moyennes(rnbClient30,rsys30,12*60)
+  
+  print(paste("E(N)/E(W)=",moyenne10[[1]]/moyenne10[[2]]))
+  print(paste("lambda=",10/60))
+  print(paste("E(N)/E(W)=",moyenne14[[1]]/moyenne14[[2]]))
+  print(paste("lambda=",14/60))
+  print(paste("E(N)/E(W)=",moyenne20[[1]]/moyenne20[[2]]))
+  print(paste("lambda=",20/60))
+  print(paste("E(N)/E(W)=",moyenne30[[1]]/moyenne30[[2]]))
+  print(paste("lambda=",30/60))
+  #taux d'erreur 
+
+```
+Nous allons maintenant vérifier #écrire formules
+```{r echo=FALSE, message=FALSE}
+
+  print(paste("E(W)-E(Wa)=",moyenne10[[2]]-moyenne10[[4]]))
+  print(paste("E(W)-E(Wa)=",moyenne14[[2]]-moyenne14[[4]]))
+  print(paste("E(W)-E(Wa)=",moyenne20[[2]]-moyenne20[[4]]))
+  print(paste("E(W)-E(Wa)=",moyenne30[[2]]-moyenne30[[4]]))
+  print(paste("1/mu=",60/20))
+  #taux d'erreur 
+
+```
+Nous allons maintenant vérifier #écrire formules
+```{r echo=FALSE, message=FALSE}
+  
+  print(paste("E(Na)/E(Wa) =",moyenne10[[3]]/moyenne10[[4]]))
+  print(paste("lambda =",10/60))
+  print(paste("E(W)-E(Wa) =",moyenne14[[3]]/moyenne14[[4]]))
+  print(paste("lambda =",14/60))
+  print(paste("E(W)-E(Wa) =",moyenne20[[3]]/moyenne20[[4]]))
+  print(paste("lambda =",20/60))
+  print(paste("E(W)-E(Wa) =",moyenne30[[3]]/moyenne30[[4]])))
+  print(paste("lambda =",30/60))
+  #taux d'erreur 
+
+```
+\section*{2.La file M/M/2 }
+\addcontentsline{toc}{subsection}{La file M/M/2}
+
+\paragraph{}
+Nous allons visualiser l'évolution d'un système pendant une durée de 12 heures:
+```{r echo=FALSE, message=FALSE,fig.cap='évolution du nombre de clients dans le système pendant 12 heures de fonctionnement' ,fig.subcap=c('10 clients qui arrivent et 20 qui partent en moyenne par heure','14 clients qui arrivent et 20 qui partent en moyenne par heure','20 clients qui arrivent et 20 qui partent en moyenne par heure','30 clients qui arrivent et 20 qui partent en moyenne par heure'), fig.ncol=2, out.width="50%"}
+
+r2sys10 <- FileMM2(10/60, 20/60, 12*60)
+r2sys14 <- FileMM2(14/60, 20/60, 12*60)
+r2sys20 <- FileMM2(20/60, 20/60, 12*60)
+r2sys30 <- FileMM2(30/60, 20/60, 12*60)
+  
+r2nbClient10 <- nbClients(r2sys10[[1]], r2sys10[[2]])
+r2nbClient14 <- nbClients(r2sys14[[1]], r2sys14[[2]])
+r2nbClient20 <- nbClients(r2sys20[[1]], r2sys20[[2]])
+r2nbClient30 <- nbClients(r2sys30[[1]], r2sys30[[2]])
+
+plot(r2nbClient10[[1]],r2nbClient10[[2]],xlab='temps', ylab='Nombre de clients',cex=0.5, type="o",main='',col = "red")
+plot(r2nbClient14[[1]],r2nbClient14[[2]],xlab='temps', ylab='Nombre de clients',cex=0.5, type="o",main='',col = "blue")
+plot(r2nbClient20[[1]],r2nbClient20[[2]],xlab='temps', ylab='Nombre de clients',cex=0.5, type="o",main='',col = "green")
+plot(r2nbClient30[[1]],r2nbClient30[[2]],xlab='temps', ylab='Nombre de clients',cex=0.5, type="o",main='',col = "pink")
+
+
 ```
 \part{Annexes}
 \label{part:annexes}

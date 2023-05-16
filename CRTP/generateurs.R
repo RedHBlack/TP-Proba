@@ -115,38 +115,68 @@ Runs <- function(x, nb)
 FileMM1 <- function(lambda, mu, Duree){
   arrivee <- vector()
   depart <- vector()
+  attente <- vector()
   T <- 0
-  D <- 0
   i <- 1
   while(T<=Duree){
     T <- T + rexp(1,lambda)
     if(T <= Duree){
       arrivee[i] <- T
-      D <- arrivee[i] + rexp(1,mu)
-      if(D <= Duree){
-        depart[i] <- D
-      }
       i <- i + 1
     }
+  }
+  depart[1] <- arrivee[1] + rexp(1, mu)
+  attente[1] <- 0
+  i <- 2
+  while ( i<= length(arrivee) &&arrivee[i]<= Duree){
+    depart[i] <- max(arrivee[i], depart[i-1])+ rexp(1, mu)
+    attente[i] <- max(arrivee[i], depart[i-1]) - arrivee[i]
+    i <- i+1
+  }
+  retour <- list(arrivee, depart, attente)
+  return(retour)
+}
+
+FileMM2 <- function(lambda, mu, Duree){
+  arrivee <- vector()
+  depart <- vector()
+  T <- 0
+  i <- 1
+  while(T<=Duree){
+    T <- T + rexp(1,lambda)
+    if(T <= Duree){
+      arrivee[i] <- T
+      i <- i + 1
+    }
+  }
+  i <- 3
+  depart[1] <- arrivee[1] + rexp(1, mu)
+  depart[2] <- arrivee[2] + rexp(1, mu)
+  while ( i<= length(arrivee) && arrivee[i]<= Duree){
+    depart[i] <- max(arrivee[i], min(depart[i-1], depart[i-2]))+ rexp(1, mu)
+    i <- i+1
   }
   retour <- list(arrivee, depart)
   return(retour)
 }
 
-nbClients <- function(arrivee, depart){
+nbClients <- function(arrivee, depart, enAttente){
   defaultW <- getOption("warn")
   options(warn = -1)
   i <- 1
   j <- 1
   k <- 1
   NBpersonnes <- vector()
+  NBattente <- vector()
   NBpersonnes[k] <- 0
+  NBattente[k] <- 0
   heure <- vector()
   heure[k] <- 0
   k <- k+1
   while(i <= length(arrivee) || j <= length(depart) ){
     if(i <= length(arrivee) && arrivee[i] < min(depart, na.rm = TRUE)){
       NBpersonnes[k] <- NBpersonnes[k-1]+1
+      
       heure[k] <- arrivee[i]
       i <- i + 1
     }else{
@@ -155,9 +185,128 @@ nbClients <- function(arrivee, depart){
       depart <- depart[depart != heure[k]]
       j <- j + 1
     }
+    if(NBpersonnes[k] != 0){
+      NBattente[k] = NBpersonnes[k] -1
+    }else{
+      NBattente[k] = 0
+    }
     k <- k +1
   }
   options(warn = defaultW)
-  systeme <- list(heure, NBpersonnes)
+  systeme <- list(heure, NBpersonnes, NBattente)
   return(systeme)
 }
+# Moyenne nb clients et moyenne temps resté
+Moyennes <- function(nbClients, fileDepArr, Duree){
+  moyNbClients <- vector()
+  for(i in 1:length(nbClients[[2]])){
+    if(i!=length(nbClients[[2]])){
+      moyNbClients[i] <- nbClients[[2]][i]*(nbClients[[1]][i+1]-nbClients[[1]][i])
+    }else{
+      moyNbClients[i] <- nbClients[[2]][i]*(Duree-nbClients[[1]][i])
+    }
+  }
+  moyNbClients <- sum(moyNbClients)/Duree
+  tempsMoyen <- sum(fileDepArr[[2]]-fileDepArr[[1]])/length(fileDepArr[[1]])
+  
+  Na <- vector()
+  for(i in 1:length(nbClients[[3]])){
+    if(i!=length(nbClients[[3]])){
+      Na[i] <- nbClients[[3]][i]*(nbClients[[1]][i+1]-nbClients[[1]][i])
+    }else{
+      Na[i] <- nbClients[[3]][i]*(Duree-nbClients[[1]][i])
+    }
+  }
+  Na <- sum(Na)/Duree
+  Wa <- mean(fileDepArr[[3]])
+  
+  moyennes <- list(moyNbClients, tempsMoyen, Na, Wa)
+  return (moyennes)
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
