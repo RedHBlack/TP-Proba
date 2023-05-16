@@ -283,7 +283,7 @@ Nous allons maintenant vérifier #écrire formules
   print(paste("lambda =",14/60))
   print(paste("E(W)-E(Wa) =",moyenne20[[3]]/moyenne20[[4]]))
   print(paste("lambda =",20/60))
-  print(paste("E(W)-E(Wa) =",moyenne30[[3]]/moyenne30[[4]])))
+  print(paste("E(W)-E(Wa) =",moyenne30[[3]]/moyenne30[[4]]))
   print(paste("lambda =",30/60))
   #taux d'erreur 
 
